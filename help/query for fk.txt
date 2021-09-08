@@ -1,0 +1,4 @@
+-- Query for Foreign Key
+
+KEY `AWSStudyTransferRequestRefersStudyDetail` (`fk_studyDetailId`),
+ CONSTRAINT `AWSStudyTransferRequestRefersStudyDetail` FOREIGN KEY (`fk_studyDetailId`) REFERENCES `tbl_study_detail` (`pk_studyDetailId`)
