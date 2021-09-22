@@ -3,6 +3,7 @@
     <%@page import = "cs.jpp.bl.AuthenticationBl" %>
     <%@page import = "cs.jpp.bl.customer.CustomerBL" %>
     <%@page import = "cs.jpp.dto.customer.Customer" %>
+    <%@page import = "java.util.ArrayList" %>
     
 <!DOCTYPE html>
 <html>
@@ -12,6 +13,7 @@
 </head>
 <body>
 <%
+/*
 byte approved = 1;
 byte status = 1;
 Customer customer = new Customer();
@@ -32,7 +34,21 @@ if(result > 0){
 }else{
 	out.print("failed");
 }
+*/
+ArrayList<Customer> customers = null;
 
+
+try {
+
+	customers = CustomerBL.getCustomers();
+	for(Customer customer : customers){
+		System.out.println(customer.getName());
+	}
+} catch (Exception e) {
+	e.printStackTrace();
+	System.out.println("CustomerBL : getCustomers : Exception :" + e.getMessage());
+
+}
 %>
 </body>
 </html>

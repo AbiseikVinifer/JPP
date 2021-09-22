@@ -1,9 +1,11 @@
 package cs.jpp.dl.db;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class DbConnection {
 	public static Connection con;
@@ -35,20 +37,36 @@ public class DbConnection {
 			System.out.println("*** ERROR DbConnection : closeDbConnection : SQLException :" + e.getMessage());
 		}
 		
-	}
+	} 
 	
 	public static int executeNonQuery(String query) {
 		int result = 0;
 		try {
 			result = stmt.executeUpdate(query);
 
-			closeDbConnection();
+			//closeDbConnection();
 		} catch (SQLException e) {
 			result = -1;
 			e.printStackTrace();
 			System.out.println("*** ERROR DbConnection : executeNonQuery : SQLException :" + e.getMessage());
 		}
 		return result;
+	}
+	
+	public static ResultSet executeQuery(String query) {
+		ResultSet rsRows = null ;
+		try {
+			/* if (stmt != null) {
+				stmt.o();
+			} */
+			rsRows = stmt.executeQuery(query);
+
+			//closeDbConnection();
+		} catch (SQLException e) {
+						
+			System.out.println("*** ERROR DbConnection : executeQuery : SQLException :" + e.getMessage());
+		}
+		return rsRows;
 	}
 
 }
