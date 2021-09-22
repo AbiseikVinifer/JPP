@@ -31,6 +31,35 @@ public class CustomerBL {
 			System.out.println("CustomerBL : getCustomers : Exception :" + e.getMessage());
 
 		}
-		return (customers);
+		return customers;
+	}
+	
+	public static Customer getCustomer(int cus_id) {
+		Customer customer = null;
+		
+
+		try {
+
+			customer = CustomerService.getCustomer(cus_id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("CustomerBL : getCustomer : Exception :" + e.getMessage());
+
+		}
+		return customer;
+	}
+	
+	public static int updateCustomer(Customer customer) {
+		int result = 0;
+
+		try {
+
+			result = CustomerService.updateCustomer(customer);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("CustomerBL : updateCustomer : Exception :" + e.getMessage());
+
+		}
+		return (result);
 	}
 }

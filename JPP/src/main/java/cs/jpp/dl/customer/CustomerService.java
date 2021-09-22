@@ -43,6 +43,7 @@ public class CustomerService {
 		return result;
 	}
 	
+	// Function to fetch all the Customers Details:
 	public static ArrayList<Customer> getCustomers(){
 		ArrayList<Customer> customers = null;
 		String query = "";
@@ -74,5 +75,62 @@ public class CustomerService {
 		}
 		return customers;
 	}
+	
+	// Function to get the customer details againt Customer ID:
+	public static Customer getCustomer(int cus_id){
+		Customer customer = null;
+		String query = "";
+		ResultSet rsRows = null;
+		
+		try {
+			query = "select * from tbl_customer where pk_customerId = " + cus_id;
+			rsRows = DbConnection.executeQuery(query);
+			if(rsRows != null) {
+				if(rsRows.next()) {
+					customer = new Customer();
+					customer.setCustomerId(rsRows.getInt("pk_customerId"));
+					customer.setName(rsRows.getString("name"));
+					customer.setBranchId(rsRows.getInt("fk_branchId"));
+					customer.setAddress(rsRows.getString("address"));
+					customer.setMobileNo(rsRows.getString("mobileNo"));
+					customer.setEmailId(rsRows.getString("emailId"));
+					customer.setStatus(rsRows.getByte("status"));
+					customer.setApproved(rsRows.getByte("approved"));
+					
+				}
+			}
+			
+		}catch(Exception e){
+			System.out.println("*** ERROR CustomerService : getCustomer : Exception :" + e.getMessage());
+		}
+		return customer;
+	}
+	
+	public static int updateCustomer(Customer customer) {
+		int result = 0;
+		String query = "";
+		
+		try {
+			// Generate query for Update Customer:
+			
+			query = "update tbl_customer ";
+			query = query + "set name = " + "'" + customer.getName() + "',";
+			query = query + "fk_branchId = " + customer.getBranchId() + ",";
+			query = query + "address = " + "'" + customer.getAddress() + "',";
+			query = query + "mobileNo = " +  "'" + customer.getMobileNo() + "',";
+			query = query + "emailId = " + "'" + customer.getEmailId() + "',";
+			query = query + "updatedBy = " + customer.getUpdatedBy() + " where pk_customerId = " + customer.getCustomerId();
+			
+				
+			result = DbConnection.executeNonQuery(query);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("*** ERROR CustomerService : updateCustomer : Exception :" + e.getMessage());
+		}
+		
+		return result;
+	}
+
 
 }

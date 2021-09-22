@@ -66,7 +66,7 @@
 						for(Customer customer: customers){ %>
 					<tr>
 						<td>
-							<%= customer.getCustomerId() %>
+						<%= customer.getCustomerId() %>
 						</td>
 						<td>
 						<%= customer.getName() %>
@@ -81,7 +81,7 @@
 						<%= customer.getMobileNo() %>
 						</td>
 						<td>
-							<a href="#editCustomerModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+							<a href="cus_edit.jsp?cus_id=<%= customer.getCustomerId() %>" class="edit"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
 							<a href="#deleteCustomerModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
 
 						</td>
