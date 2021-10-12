@@ -13,7 +13,13 @@
           <a class="nav-link active" aria-current="page" href="#">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="test_list.jsp">Customer</a>
+          <a class="nav-link" href="../customer/cus_list.jsp">Customer</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../employee/emp_list.jsp">Employee</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../branch/br_list.jsp">Branch</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

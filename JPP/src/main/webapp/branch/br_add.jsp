@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page import = "cs.jpp.dto.branch.Branch" %>
+<%@ page import = "cs.jpp.bl.branch.BranchBL" %>
+<%@ page import = "cs.jpp.helper.Utility" %>
     
 <!DOCTYPE html>
 <html lang="en">
@@ -24,6 +27,109 @@
 <link rel="stylesheet" href="../include/css/main_style.css">
 </head>
 <body>
+<%!
+String br_name_error, location_error, address_error, licenseNo_error, managerId_error, phoneNo_error, emailId_error;
+String br_name, location, address, licenseNo, managerId, phoneNo, emailId;
+boolean error = false;
+%>
+
+<%
+br_name_error = "";
+location_error = "";
+address_error = "";
+licenseNo_error = "";
+managerId_error = "";
+phoneNo_error = "";
+emailId_error = "";
+
+br_name = "";
+location = "";
+address = "";
+licenseNo ="";
+managerId = "";
+phoneNo = "";
+emailId = "";
+
+if("POST".equalsIgnoreCase(request.getMethod())){
+	br_name = request.getParameter("br_name");
+	location = request.getParameter("location");
+	address = request.getParameter("address");
+	licenseNo = request.getParameter("licenseNo");
+	managerId = request.getParameter("managerId");
+	phoneNo = request.getParameter("phoneNo");
+	emailId = request.getParameter("email");
+	
+	if(br_name.length() == 0){
+		br_name_error = "Name should not be empty";
+		error = true;
+	}
+	
+	if(location.length() == 0){
+		location_error = "Location should not be empty";
+		error = true;
+	}
+	
+	if(address.length() == 0){
+		address_error = "Address should not be empty";
+		error = true;
+	}
+	
+	if(licenseNo.length() == 0){
+		licenseNo_error = "License No should not be empty";
+		error = true;
+	}
+	
+	if(managerId.length() == 0){
+		managerId_error = "Manager Id should not be empty";
+		error = true;
+	}
+	
+	if(phoneNo.length() == 0){
+		phoneNo_error = "Phone No should not be empty";
+		error = true;
+	}else if(!Utility.isValidMobileNo(phoneNo)){
+		phoneNo_error = "Phone No should be 10 numeric digits";
+		error = true;
+	}
+	
+	if(emailId.length() == 0){
+		emailId_error = "email should not be empty";
+		error = true;
+	}else if(!Utility.isValidEmail(emailId)){
+		emailId_error = "Invalid Email ID";
+		error = true;
+	}
+	
+	if(error == false){
+		Branch branch = null;
+		int result = 0;
+		byte status = 1;
+		
+		try{
+			branch = new Branch();
+			branch.setName(br_name);
+			branch.setLocation(location);
+			branch.setAddress(address);
+			branch.setLicenseNo(licenseNo);
+			branch.setManagerId(Integer.parseInt(managerId));
+			branch.setPhoneNo(phoneNo);
+			branch.setEmailId(emailId);
+			branch.setStatus(status);
+			
+			result = BranchBL.createBranch(branch);
+			if(result>0){
+				response.sendRedirect("br_list.jsp");
+			}else{
+				System.out.println("Branch creation error");
+			}
+		}catch(Exception e){
+			System.out.println("Error: br_add.jsp: " + e.getMessage());
+		}
+	}
+}else {
+	System.out.println("form not submitted");
+}
+%>
 
 <div class="container-xl">
 <jsp:include page="../include/menu/menu.jsp" />
@@ -43,18 +149,18 @@
 		<div class="row">
 		    <div class="col-sm-2" ></div>
 		    <div class="col-sm-4" >
-		    	<form>
+		    	<form method = post>
 		    		   <!-- Name input -->
 					  <div class="form-outline mb-4">
 					  	<label class="form-label" for="labelForName">Name</label>
-					    <input type="text" id="cus_name" name="cus_name" class="form-control" required />
+					    <input type="text" id="br_name" name="br_name" class="form-control" required />
 					    <small id="br_name_error" class="text-danger">				          
 				        </small>					    
 					  </div>
 					  
 					  <!-- Location input -->
 					  <div class="form-outline mb-4">
-					  	<label class="form-label" for="labelForBranchId">Location</label>
+					  	<label class="form-label" for="labelForlocation">Location</label>
 					    <input type="text" id="location" name="location" class="form-control" required/>
 					    <small id="location_error" class="text-danger">				          
 				        </small>					    
@@ -67,9 +173,9 @@
 					    <small id="address_error" class="text-danger">
 				        </small>	
 					  </div>
-			</div>		 
+			</div>		
+			 
 		    <div class="col-sm-4" >
-		    
 		    		  <!-- LicenseNo input -->
 					  <div class="form-outline mb-4">
 					  	<label class="form-label" for="labelForLicenseNo">License No</label>
@@ -102,7 +208,8 @@
 					    <input type="email" class="form-control" id="emailId" name="emailId" required />
 					    <small id="email_error" class="text-danger">
 				        </small>					    
-					  </div>					  					  					  
+					  </div>	
+				</form>				  					  					  
 		    </div>		    
 		    <div class="col-sm-2" ></div>
 		    
@@ -113,7 +220,6 @@
 			    <div class="col-sm-8" >
 			   			 <!-- Submit button -->
 					 	 <input type="submit" class="btn btn-primary btn-block" id="submit" name="submit" value="Submit"/>
-						 </form>
 			    </div>
 			    <div class="col-sm-2" ></div>
 			</div>

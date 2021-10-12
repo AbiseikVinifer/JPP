@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
-<%@ page import = "cs.jpp.dto.employee.Employee"  %>
-<%@ page import = "cs.jpp.bl.employee.EmployeeBL" %>
+<%@ page import = "cs.jpp.dto.customer.Customer" %>
 <%@ page import = "java.util.ArrayList" %>
-
+<%@ page import = "cs.jpp.bl.customer.CustomerBL" %>
+    
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,84 +35,71 @@
 			<div class="table-title">
 				<div class="row">
 					<div class="col-sm-6">
-						<h2>Manage <b>Employee</b></h2>
+						<h2>Manage <b>Customer</b></h2>
 					</div>
 					<div class="col-sm-6">
-						<a href="emp_add.jsp" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Add New Employee</span></a>
-						<!-- <a href="emp_delete.jsp" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a> -->						
+						<a href="cus_add.jsp" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Add New Customer</span></a>
+						<!-- <a href="cus_delete.jsp" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a> -->						
 					</div>
 				</div>
 			</div>
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-hover" border="0">
 				<thead>
 					<tr>
-						<th>Employee ID</th>
+						
+						<th>ID</th>
 						<th>Name</th>
-						<th>Branch Id</th>
-						<th>Address</th>
-						<th>Mobile No</th>
 						<th>Email</th>
-						<th>Qualification</th>
-						<th>Type</th>
+						<th>Address</th>
+						<th>Phone</th>
+						<th></th>
 						<th>Actions</th>
 					</tr>
-				</thead>			
+				</thead>
 				<tbody>
 				<%!
-				ArrayList<Employee> employees = null;
+				ArrayList<Customer> customers = null;
 				%>
 				<%
 				try{
-					employees = EmployeeBL.getEmployees();
-					if(employees != null){
-						for(Employee employee: employees){%>
-						<tr>
-						
+					customers = CustomerBL.getCustomers();
+					if(customers != null){
+						for(Customer customer: customers){ %>
+					<tr>
 						<td>
-						<%= employee.getEmployeeId() %>
+						<%= customer.getCustomerId() %>
+						</td>
+						<td>
+						<%= customer.getName() %>
+						</td>
+						<td>
+						<%= customer.getEmailId() %>
+						</td>
+						<td>
+						<%= customer.getAddress() %>
+						</td>
+						<td>
+						<%= customer.getMobileNo() %>
+						</td>
+						<td align = "right">
+							<a href="#viewCustomerModal" class="delete feed-id" data-toggle="modal" data-id = '<%= customer.getCustomerId() %>' ><i class="material-icons" data-toggle="tooltip" title="Delete">&#xe002;</i></a>
+						</td>
+						<td>
+							<a href="cus_edit.jsp?cus_id=<%= customer.getCustomerId() %>" class="edit"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+							<a href="#deleteCustomerModal" class="delete feed-id" data-toggle="modal" data-id = '<%= customer.getCustomerId() %>' ><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>																					
 						</td>
 						
-						<td>
-						<%= employee.getName() %>
-						</td>
-						
-						<td>
-						<%= employee.getBranchId() %>
-						</td>
-						
-						<td>
-						<%= employee.getAddress() %>
-						</td>
-						
-						<td>
-						<%= employee.getMobileNo() %>
-						</td>
-						
-						<td>
-						<%= employee.getEmailId() %>
-						</td>
-						
-						<td>
-						<%= employee.getQualification() %>
-						</td>
-						
-						<td>
-						<%= employee.getType() +"" %>
-						</td>
-						
-						<td>
-							<a href="emp_view.jsp?emp_id=<%=employee.getEmployeeId()%>" class="view" ><i class="material-icons" data-toggle="tooltip" title="View">&#xe002;</i></a>
-							<a href="emp_edit.jsp?emp_id=<%=employee.getEmployeeId()%>" class="edit" ><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-							<a href="#deleteEmployeeModal" class="delete feed-id" data-toggle="modal" data-id = '<%=employee.getEmployeeId()%>'><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-						</td>
-					</tr>						
-						<%}
+					</tr>
+					<%												
+						}
 					}
+					
 				}catch(Exception e){
-					System.out.println("Error: emp_list.jsp: " + e.getMessage());
+					System.out.println("Error: cus_list.jsp: " + e.getMessage());
 				}
 				%>
-									
+					
+					 
 				</tbody>
 			</table>
 			<div class="clearfix">
@@ -130,37 +117,38 @@
 		</div>
 	</div>        
 </div>
-<div id="deleteEmployeeModal" class="modal fade">
+<div id="deleteCustomerModal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
 		<%
-			if("POST".equalsIgnoreCase(request.getMethod())){
+			if ("POST".equalsIgnoreCase(request.getMethod())){
+				
 				int result = 0;
 				byte status = 0;
-				int emp_id = 0;
+				int cus_id = 0;
 				
 				try{
-					emp_id = Integer.parseInt(request.getParameter("cid"));
-					result = EmployeeBL.changeEmployeeStatus(emp_id, status);
+					cus_id = Integer.parseInt(request.getParameter("cid"));
+					result = CustomerBL.changeCustomerStatus(cus_id, status);
 					if(result > 0){
-						response.sendRedirect("emp_list.jsp");
+						response.sendRedirect("cus_list.jsp");
 					}else{
 						System.out.println("Query not Sucessfully updated");
 					}
 				}catch(Exception e){
-					System.out.println("Error: emp_list.jsp : Delete " + e.getMessage());
+					System.out.println("Error: cus_list.jsp: Delete: " + e.getMessage());
 				}
 			}
-				%>
-				<form method = post>
+		%>
+			<form method = post>
 				<div class="modal-header">						
-					<h4 class="modal-title">Disable Employee</h4>
+					<h4 class="modal-title">Disable Customer</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				</div>
-				<div class="modal-body">
-				<input id="feed_id" name="cid" type="hidden" value="" />					
-					<p>Are you sure to disable the Employee?</p>
-					<p class="text-warning"><small>Employee can't be login.</small></p>
+				<div class="modal-body">	
+				<input id="feed_id" name="cid" type="hidden" value="" />				
+					<p>Are you sure to disable the Customer?</p>
+					<p class="text-warning"><small>Customer can't be login.</small></p>
 				</div>
 				<div class="modal-footer">
 					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
@@ -170,6 +158,41 @@
 		</div>
 	</div>
 </div>
+<div id="viewCustomerModal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form>
+				<div class="modal-header">						
+					<h4 class="modal-title">Add Employee</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				</div>
+				<div class="modal-body">					
+					<div class="form-group">
+						<label>Name</label>
+						<input type="text" class="form-control" required>
+					</div>
+					<div class="form-group">
+						<label>Email</label>
+						<input type="email" class="form-control" required>
+					</div>
+					<div class="form-group">
+						<label>Address</label>
+						<textarea class="form-control" required></textarea>
+					</div>
+					<div class="form-group">
+						<label>Phone</label>
+						<input type="text" class="form-control" required>
+					</div>					
+				</div>
+				<div class="modal-footer">
+					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+					<input type="submit" class="btn btn-success" value="Add">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
 
 </body>
 <script>

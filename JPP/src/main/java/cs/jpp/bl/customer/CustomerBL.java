@@ -19,13 +19,13 @@ public class CustomerBL {
 		return (result);
 	}
 	
-	public static ArrayList<Customer> getCustomers() {
+	public static ArrayList<Customer> getCustomers(int pageNo) {
 		ArrayList<Customer> customers = null;
 		
 
 		try {
 
-			customers = CustomerService.getCustomers();
+			customers = CustomerService.getCustomers(pageNo);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("CustomerBL : getCustomers : Exception :" + e.getMessage());
@@ -61,5 +61,34 @@ public class CustomerBL {
 
 		}
 		return (result);
+	}
+	
+	public static int changeCustomerStatus(int cus_id, byte status) {
+		int result = 0;
+
+		try {
+
+			result = CustomerService.changeCustomerStatus(cus_id, status);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("CustomerBL : changeCustomerStatus : Exception :" + e.getMessage());
+
+		}
+		return (result);
+	}
+	
+	public static ArrayList<Customer> getCustomerByKey(String searchKey) {
+		ArrayList<Customer> customers = null;
+		
+
+		try {
+
+			customers = CustomerService.getCustomerByKey(searchKey);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("CustomerBL : getCustomerByKey : Exception :" + e.getMessage());
+
+		}
+		return customers;
 	}
 }

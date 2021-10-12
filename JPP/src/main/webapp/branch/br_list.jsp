@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page import = "cs.jpp.dto.branch.Branch" %>
+<%@ page import = "cs.jpp.bl.branch.BranchBL" %>
+<%@ page import = "java.util.ArrayList" %>
     
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +35,7 @@
 			<div class="table-title">
 				<div class="row">
 					<div class="col-sm-6">
-						<h2>Manage <b>Customer</b></h2>
+						<h2>Manage <b>Branch</b></h2>
 					</div>
 					<div class="col-sm-6">
 						<a href="br_add.jsp" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Add New Branch</span></a>
@@ -55,76 +58,60 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
+					<%!
+				ArrayList<Branch> branches = null;
+				%>
+				<%
+				try{
+					branches = BranchBL.getBranches();
+					if(branches != null){
+						for(Branch branch: branches){%>
+						<tr>
 						
-						<td>Thomas Hardy</td>
-						<td>thomashardy@mail.com</td>
-						<td>89 Chiaroscuro Rd, Portland, USA</td>
-						<td>(171) 555-2222</td>
-						<td></td>
-						<td></td>
-						<td></td>
 						<td>
-							<a href="#editBranchModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-							<a href="#deleteBranchModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+						<%= branch.getBranchId() %>
 						</td>
-					</tr>
-					<tr>
 						
-						<td>Dominique Perrier</td>
-						<td>dominiqueperrier@mail.com</td>
-						<td>Obere Str. 57, Berlin, Germany</td>
-						<td>(313) 555-5735</td>
-						<td></td>
-						<td></td>
-						<td></td>
 						<td>
-							<a href="#editBranchModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-							<a href="#deleteBranchModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+						<%= branch.getName() %>
 						</td>
-					</tr>
-					<tr>
 						
-						<td>Maria Anders</td>
-						<td>mariaanders@mail.com</td>
-						<td>25, rue Lauriston, Paris, France</td>
-						<td>(503) 555-9931</td>
-						<td></td>
-						<td></td>
-						<td></td>
 						<td>
-							<a href="#editBranchModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-							<a href="#deleteBranchModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+						<%= branch.getLocation() %>
 						</td>
-					</tr>
-					<tr>
 						
-						<td>Fran Wilson</td>
-						<td>franwilson@mail.com</td>
-						<td>C/ Araquil, 67, Madrid, Spain</td>
-						<td>(204) 619-5731</td>
-						<td></td>
-						<td></td>
-						<td></td>
 						<td>
-							<a href="#editBranchModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-							<a href="#deleteBranchModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+						<%= branch.getAddress() %>
 						</td>
-					</tr>					
-					<tr>
 						
-						<td>Martin Blank</td>
-						<td>martinblank@mail.com</td>
-						<td>Via Monte Bianco 34, Turin, Italy</td>
-						<td>(480) 631-2097</td>
-						<td></td>
-						<td></td>
-						<td></td>
 						<td>
-							<a href="#editBranchModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-							<a href="#deleteBranchModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+						<%= branch.getLicenseNo() %>
 						</td>
-					</tr> 
+						
+						<td>
+						<%= branch.getManagerId() %>
+						</td>
+						
+						<td>
+						<%= branch.getPhoneNo() %>
+						</td>
+						
+						<td>
+						<%= branch.getEmailId() %>
+						</td>
+						
+						<td>
+							<a href="br_view.jsp?emp_id=<%=branch.getBranchId()%>" class="view" ><i class="material-icons" data-toggle="tooltip" title="View">&#xe002;</i></a>
+							<a href="br_edit.jsp?emp_id=<%=branch.getBranchId()%>" class="edit" ><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+							<a href="#deleteBranchModal" class="delete feed-id" data-toggle="modal" data-id = '<%=branch.getBranchId()%>'><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+						</td>
+					</tr>						
+						<%}
+					}
+				}catch(Exception e){
+					System.out.println("Error: emp_list.jsp: " + e.getMessage());
+				}
+				%>
 				</tbody>
 			</table>
 			<div class="clearfix">

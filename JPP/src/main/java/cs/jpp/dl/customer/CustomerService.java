@@ -6,6 +6,7 @@ import cs.jpp.dto.customer.Customer;
 import java.sql.ResultSet;
 
 public class CustomerService {
+	
 	public static int createCustomer(Customer customer) {
 		int result = 0;
 		String query = "";
@@ -44,15 +45,21 @@ public class CustomerService {
 	}
 	
 	// Function to fetch all the Customers Details:
-	public static ArrayList<Customer> getCustomers(){
+	
+	public static ArrayList<Customer> getCustomers(int pageNo){
+		
 		ArrayList<Customer> customers = null;
 		String query = "";
 		ResultSet rsRows = null;
 		Customer customer = null;
+		int limit = 0;
+		int pageSize = 5;
 		
 		try {
+			pageNo = pageSize * (pageNo - 1);
 			customers = new ArrayList<Customer>();
-			query = "select * from tbl_customer";
+			query = "select * from tbl_customer where status = 1 order by pk_customerId desc limit " + pageNo + "," + pageSize;
+			System.out.println(query);
 			rsRows = DbConnection.executeQuery(query);
 			if(rsRows != null) {
 				while(rsRows.next()) {
@@ -77,7 +84,9 @@ public class CustomerService {
 	}
 	
 	// Function to get the customer details againt Customer ID:
+	
 	public static Customer getCustomer(int cus_id){
+		
 		Customer customer = null;
 		String query = "";
 		ResultSet rsRows = null;
@@ -107,6 +116,7 @@ public class CustomerService {
 	}
 	
 	public static int updateCustomer(Customer customer) {
+		
 		int result = 0;
 		String query = "";
 		
@@ -131,6 +141,63 @@ public class CustomerService {
 		
 		return result;
 	}
+	
+	public static int changeCustomerStatus(int cus_Id, byte status) {
+		
+		int result = 0;
+		String query = "";
+		
+		try {
+			// Generate query for Change the Status of the Customer:
+			
+			query = "update tbl_customer ";
+			query = query + "set status = "  + status + " where pk_customerId = " + cus_Id;
+			
+				
+			result = DbConnection.executeNonQuery(query);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("*** ERROR CustomerService : changeCustomerStatus : Exception :" + e.getMessage());
+		}
+		
+		return result;
+	}
 
+	// Function to get the customer details against Customer Name:
+	
+		public static ArrayList<Customer> getCustomerByKey(String searchKey){
+			
+			ArrayList<Customer> customers = null;
+			Customer customer = null;
+			String query = "";
+			ResultSet rsRows = null;
+			
+			try {
+				query = "select * from tbl_customer where name like '%" + searchKey + "%' or emailId ='" + searchKey +"' or mobileNo ='" + searchKey +"'";
+				System.out.println(query);
+				rsRows = DbConnection.executeQuery(query);
+				if(rsRows != null) {
+					customers = new ArrayList<Customer>();
+					while(rsRows.next()) {
+						customer = new Customer();
+						customer.setCustomerId(rsRows.getInt("pk_customerId"));
+						customer.setName(rsRows.getString("name"));
+						customer.setBranchId(rsRows.getInt("fk_branchId"));
+						customer.setAddress(rsRows.getString("address"));
+						customer.setMobileNo(rsRows.getString("mobileNo"));
+						customer.setEmailId(rsRows.getString("emailId"));
+						customer.setStatus(rsRows.getByte("status"));
+						customer.setApproved(rsRows.getByte("approved"));
+						
+						customers.add(customer);
+					}
+				}
+				
+			}catch(Exception e){
+				System.out.println("*** ERROR CustomerService : getCustomerByKey : Exception :" + e.getMessage());
+			}
+			return customers;
+		}
 
 }

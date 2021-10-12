@@ -2,6 +2,9 @@
 <%@ page import = "cs.jpp.helper.Utility" %>
 <%@ page import = "cs.jpp.dto.customer.Customer" %>
 <%@ page import = "cs.jpp.bl.customer.CustomerBL" %>
+<%@ page import = "cs.jpp.bl.branch.BranchBL" %>
+<%@ page import = "cs.jpp.dto.branch.Branch" %>
+<%@ page import = "java.util.ArrayList" %>
     
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +53,7 @@ address = "";
 	if ("POST".equalsIgnoreCase(request.getMethod())) {
 		
 		// getting values from the form to variable
-		
+		error = false;
 		cus_name = request.getParameter("cus_name"); 
 		branchId = request.getParameter("branchId");
 		mobileNo = request.getParameter("mobileNo"); 
@@ -158,10 +161,28 @@ address = "";
 					  <div class="form-outline mb-4">
 					  	<label class="form-label" for="labelForBranchId">Branch Id</label>
 					    <select class="form-control form-select-sm" id="branchId" name="branchId">
-							  <option selected value="">Select Branch</option>
-							  <option value="1">One</option>
-							  <option value="2">Two</option>
-							  <option value="3">Three</option>
+							  <option value="">Select Branch</option>
+							  <%
+							  	ArrayList<Branch> branches = null;
+					  			try{
+					  				branches = BranchBL.getBranches();
+					  				if(branches != null){
+					  					for(Branch branch : branches){ 
+					  						String branch_id = branch.getBranchId() + "";
+					  						System.out.println("branch_id" + branch_id + "a");
+					  						System.out.println("branchId" + branchId + "b");
+					  						if(branchId.equals(branch_id)){ 
+					  							System.out.println("matched"); %>
+					  							 <option selected value='<%= branch_id %>'><%= branch.getName() %></option>
+					  						<% }else{ %>
+					  							<option value='<%= branch_id %>'><%= branch.getName() %></option>
+					  						<% }					  					
+					  					}
+					  				}
+					  			}catch(Exception e){
+									System.out.println("Error: cus_add.jsp : BarnchId dropdown : " + e.getMessage());
+								}
+							  %>
 						</select>
 					    <small id="branchId_error" class="text-danger">
 				          <%= branchId_error %>

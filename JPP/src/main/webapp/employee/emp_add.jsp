@@ -1,4 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page import = "cs.jpp.bl.employee.EmployeeBL" %>
+<%@ page import = "cs.jpp.dto.employee.Employee" %>
+<%@ page import = "cs.jpp.helper.Utility" %>
+<%@ page import = "cs.jpp.bl.branch.BranchBL" %>
+<%@ page import = "cs.jpp.dto.branch.Branch" %>
+<%@ page import = "java.util.ArrayList" %>
     
 <!DOCTYPE html>
 <html lang="en">
@@ -24,6 +30,103 @@
 <link rel="stylesheet" href="../include/css/main_style.css">
 </head>
 <body>
+<%!
+String emp_name_error, branchId_error, address_error, mobileNo_error, emailId_error, qualification_error, type_error;
+String emp_name, branchId, address, mobileNo, emailId, qualification, type;
+boolean error = false;
+%>
+<%
+emp_name_error = "";
+branchId_error = "";
+address_error = "";
+mobileNo_error = "";
+emailId_error = "";
+qualification_error = "";
+type_error = "";
+
+emp_name = "";
+branchId = "";
+address = "";
+mobileNo = "";
+emailId = "";
+qualification = "";
+type = "";
+
+	if ("POST".equalsIgnoreCase(request.getMethod())) {
+		
+		emp_name = request.getParameter("emp_name");
+		branchId = request.getParameter("branchId");
+		address = request.getParameter("address");
+		mobileNo = request.getParameter("mobileNo");
+		emailId = request.getParameter("emailId");
+		qualification = request.getParameter("qualification");
+		type = request.getParameter("type");
+		
+		if(emp_name.length() == 0){
+			emp_name_error = "name should not be empty";
+			error = true;
+		}
+		
+		if(branchId.length() == 0){
+			branchId_error = "Select a Branch";
+			error = true;
+		}
+			
+		if(address.length() == 0){
+			address_error = "Address should not be empty";
+			error = true;
+		}
+		
+		if(mobileNo.length() == 0){
+			mobileNo_error = "Mobile No should not be empty";
+			error = true;
+		}else if(!Utility.isValidMobileNo(mobileNo)){
+			mobileNo_error = "Mobile No should be 10 numeric digits";
+			error = true;
+		}
+		
+		if(emailId.length() == 0){
+			emailId_error = "Email ID should not be empty";
+			error = true;	
+		}else if(!Utility.isValidEmail(emailId)){
+			emailId_error = "Invalid Email ID";
+			error = true;
+		}
+		
+		if(error == false){
+			Employee employee = null;
+			int result = 0;
+			byte status = 1;
+			
+			try{
+				employee = new Employee();
+				employee.setName(emp_name);
+				employee.setBranchId(Integer.parseInt(branchId));
+				employee.setAddress(address);
+				employee.setMobileNo(mobileNo);
+				employee.setEmailId(emailId);
+				employee.setQualification(qualification);
+				employee.setType(Integer.parseInt(type));
+				employee.setStatus(status);
+				
+				result = EmployeeBL.createEmployee(employee);
+				if(result > 0){
+					response.sendRedirect("emp_list.jsp");
+				}else{
+					System.out.println("Employee creation error");
+				}
+				
+			}catch(Exception e){
+				System.out.println("Error: emp_add.jsp: " + e.getMessage());
+			}
+			
+		}
+		
+	}else {
+		System.out.println("form not submitted");
+	    // It was likely a GET request.
+	}
+%>
 
 <div class="container-xl">
 <jsp:include page="../include/menu/menu.jsp" />
@@ -41,36 +144,54 @@
 				</div>
 			</div>
 		<div class="row">
+		<form method = post>
 		    <div class="col-sm-2" ></div>
 		    <div class="col-sm-4" >
-		    
-		    	<form>
+
 		    		   <!-- Name input -->
 					  <div class="form-outline mb-4">
 					  	<label class="form-label" for="labelForName">Name</label>
-					    <input type="text" class="form-control" id="cus_name" name="cus_name" required />
+					    <input type="text" class="form-control" id="emp_name" name="emp_name"/>
 					    <small id="emp_name_error" class="text-danger">
+					    <%= emp_name_error %>
 				        </small>					    
 					  </div>
 					  
 					  <!-- BranchId input -->
 					  <div class="form-outline mb-4">
 					  	<label class="form-label" for="labelForBranchId">Branch Id</label>
-					    <select class="form-control form-select-sm" id="branchId" name="branchId" required>
-							  <option selected value="">Select Branch</option>
-							  <option value="1">One</option>
-							  <option value="2">Two</option>
-							  <option value="3">Three</option>
+					    <select class="form-control form-select-sm" id="branchId" name="branchId">
+					     <option value="">Select Branch</option>
+							  <%
+							  	ArrayList<Branch> branches = null;
+					  			try{
+					  				branches = BranchBL.getBranches();
+					  				if(branches != null){
+					  					for(Branch branch : branches){ 
+					  						String branch_id = branch.getBranchId() + "";					  						
+					  						if(branchId.equals(branch_id)){ %>
+					  							 <option selected value='<%= branch_id %>'><%= branch.getName() %></option>
+					  						<% }else{ %>
+					  							<option value='<%= branch_id %>'><%= branch.getName() %></option>
+					  						<% }					  					
+					  					}
+					  				}
+					  			}catch(Exception e){
+									System.out.println("Error: emp_add.jsp : BarnchId dropdown : " + e.getMessage());
+								}
+							  %>
 						</select>
-					    <small id="branchId_error" class="text-danger">				          
+					    <small id="branchId_error" class="text-danger">	
+					    <%= branchId_error %>		          
 				        </small>					    
 					  </div>
 					  
 					  <!-- Address input -->
 					  <div class="form-outline mb-4">
 					    <label for="address" class="form-label">Address</label>
-					    <textarea class="form-control" id="address" name="address" rows="5" required></textarea>
+					    <textarea class="form-control" id="address" name="address" rows="5"></textarea>
 					    <small id="address_error" class="text-danger">
+					    <%= address_error %>
 				        </small>	
 					  </div>
 					  
@@ -82,32 +203,42 @@
 					  <!-- MobileNo input -->
 					  <div class="form-outline mb-4">
 					  	<label class="form-label" for="labelForMobileNo">Mobile No</label>
-					    <input type="text" class="form-control" id="mobileNo" name="mobileNo" required />				
+					    <input type="text" class="form-control" id="mobileNo" name="mobileNo"/>				
 					    <small id="mobileNo_error" class="text-danger">
+					    <%= mobileNo_error %>
 				        </small>					    
 					  </div>
 					  
 					  <!-- Email input -->
 					  <div class="form-outline mb-4">
 					  	<label class="form-label" for="labelForEmail">Email</label>
-					    <input type="email" class="form-control" id="emailId" name="emailId" required />
+					    <input type="email" class="form-control" id="emailId" name="emailId"/>
 					    <small id="email_error" class="text-danger">
+					    <%= emailId_error %>
 				        </small>					    
 					  </div>
 					  
 					  <!-- Qualification input -->
 					  <div class="form-outline mb-4">
 					  	<label class="form-label" for="labelForEmail">Qualification</label>
-					    <input type="text" class="form-control" id="qualification" name="qualification" required />
+					    <input type="text" class="form-control" id="qualification" name="qualification"/>
 					    <small id="qualification_error" class="text-danger">
+					    <%= qualification_error %>
 				        </small>					    
 					  </div>
 					
 					<!-- Type input -->
 					  <div class="form-outline mb-4">
-					  	<label class="form-label" for="labelForEmail">Type</label>
-					    <input type="text" class="form-control" id="type" name="type" required />
-					    <small id="type_error" class="text-danger">
+					  	<label class="form-label" for="labelForType">Type</label>
+					    <select class="form-control form-select-sm" id="type" name="type">
+							  <option selected value="">Select Type</option>
+							  <option value="1">Super Admin</option>
+							  <option value="2">Branch Manager</option>
+							  <option value="3">Clerk</option>
+							  <option value="4">Appraisal</option>
+						</select>
+					    <small id="type_error" class="text-danger">	
+					    <%= type_error %>		          
 				        </small>					    
 					  </div>
 					  
@@ -124,8 +255,7 @@
 						 </form>
 			    </div>
 			    <div class="col-sm-2" ></div>
-			</div>
-					
+			</div>	
 		</div>
 	</div>        
 </div>

@@ -9,7 +9,7 @@ public class Employee {
 	private String mobileNo;
 	private String emailId;
 	private String qualification;
-	private String type;
+	private int type;
 	private byte status;
 	private byte approved;
 	private int createdBy;
@@ -38,7 +38,7 @@ public class Employee {
 	public String getQualification() {
 		return qualification;
 	}
-	public String getType() {
+	public int getType() {
 		return type;
 	}
 	public byte getStatus() {
@@ -80,7 +80,7 @@ public class Employee {
 	public void setQualification(String qualification) {
 		this.qualification = qualification;
 	}
-	public void setType(String type) {
+	public void setType(int type) {
 		this.type = type;
 	}
 	public void setStatus(byte status) {

@@ -34,34 +34,62 @@
 		<div class="table-wrapper">
 			<div class="table-title">
 				<div class="row">
-					<div class="col-sm-6">
+					<div class="col-sm-4">
 						<h2>Manage <b>Customer</b></h2>
 					</div>
-					<div class="col-sm-6">
+					
+						<%!
+						ArrayList<Customer> customers = null;
+						%>
+						<%
+							if ("POST".equalsIgnoreCase(request.getMethod()) && (request.getParameter("search") != null) && (! request.getParameter("search").equals(""))) {
+								System.out.println("form submit");
+								String searchKey = request.getParameter("search");
+								customers = CustomerBL.getCustomerByKey(searchKey);
+							}else{
+								int limit = 1;
+								try{
+									limit = Integer.parseInt(request.getParameter("limit"));
+								}catch(Exception e){
+									
+								}
+								System.out.println(limit);
+								customers = CustomerBL.getCustomers(limit);
+								System.out.println("form not submitted");
+							}
+						%>
+					<div class="col-sm-4">
+					    <form method = "post">
+					      <input type="text" placeholder="Search.." name="search">
+					      <button type="submit"><i class="fa fa-search"></i></button>
+					    </form>
+					  </div>
+					<div class="col-sm-4">
 						<a href="cus_add.jsp" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Add New Customer</span></a>
 						<!-- <a href="cus_delete.jsp" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a> -->						
 					</div>
 				</div>
+				
 			</div>
-			<table class="table table-striped table-hover">
+			
+			<table class="table table-striped table-hover" border="0">
 				<thead>
 					<tr>
 						
 						<th>ID</th>
-						<th>Name</th>
+						<th>Name</th> 
 						<th>Email</th>
 						<th>Address</th>
 						<th>Phone</th>
+						<th></th>
 						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
-				<%!
-				ArrayList<Customer> customers = null;
-				%>
+				
 				<%
 				try{
-					customers = CustomerBL.getCustomers();
+					
 					if(customers != null){
 						for(Customer customer: customers){ %>
 					<tr>
@@ -80,11 +108,14 @@
 						<td>
 						<%= customer.getMobileNo() %>
 						</td>
+						<td align = "right">
+							<a href="cus_view.jsp?cus_id=<%= customer.getCustomerId() %>" class="view"><i class="material-icons" data-toggle="tooltip" title="View">&#xe002;</i></a>
+						</td>
 						<td>
 							<a href="cus_edit.jsp?cus_id=<%= customer.getCustomerId() %>" class="edit"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-							<a href="#deleteCustomerModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-
+							<a href="#deleteCustomerModal" class="delete delete-id" data-toggle="modal" data-id = '<%= customer.getCustomerId() %>' ><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>																					
 						</td>
+						
 					</tr>
 					<%												
 						}
@@ -102,12 +133,12 @@
 				<div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
 				<ul class="pagination">
 					<li class="page-item disabled"><a href="#">Previous</a></li>
-					<li class="page-item"><a href="#" class="page-link">1</a></li>
-					<li class="page-item"><a href="#" class="page-link">2</a></li>
-					<li class="page-item active"><a href="#" class="page-link">3</a></li>
-					<li class="page-item"><a href="#" class="page-link">4</a></li>
-					<li class="page-item"><a href="#" class="page-link">5</a></li>
-					<li class="page-item"><a href="#" class="page-link">Next</a></li>
+					<li class="page-item"><a href="cus_list.jsp?limit=1" class="page-link">1</a></li>
+					<li class="page-item"><a href="cus_list.jsp?limit=2" class="page-link">2</a></li>
+					<li class="page-item active"><a href="cus_list.jsp?limit=3" class="page-link">3</a></li>
+					<li class="page-item"><a href="cus_list.jsp?limit=4" class="page-link">4</a></li>
+					<li class="page-item"><a href="cus_list.jsp?limit=5" class="page-link">5</a></li>
+					<li class="page-item"><a href="cus_list.jsp?limit=6" class="page-link">Next</a></li>
 				</ul>
 			</div>
 		</div>
@@ -116,14 +147,35 @@
 <div id="deleteCustomerModal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form>
+		<%
+			if ("POST".equalsIgnoreCase(request.getMethod()) && (request.getParameter("cid") != null) && (! request.getParameter("cid").equals(""))){
+				
+				int result = 0;
+				byte status = 0;
+				int cus_id = 0;
+				
+				try{
+					cus_id = Integer.parseInt(request.getParameter("cid"));
+					result = CustomerBL.changeCustomerStatus(cus_id, status);
+					if(result > 0){
+						response.sendRedirect("cus_list.jsp");
+					}else{
+						System.out.println("Query not Sucessfully updated");
+					}
+				}catch(Exception e){
+					System.out.println("Error: cus_list.jsp: Delete: " + e.getMessage());
+				}
+			}
+		%>
+			<form method = post>
 				<div class="modal-header">						
-					<h4 class="modal-title">Delete Employee</h4>
+					<h4 class="modal-title">Disable Customer</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				</div>
-				<div class="modal-body">					
-					<p>Are you sure you want to delete these Records?</p>
-					<p class="text-warning"><small>This action cannot be undone.</small></p>
+				<div class="modal-body">	
+				<input id="feed_id" name="cid" type="hidden" value="" />				
+					<p>Are you sure to disable the Customer?</p>
+					<p class="text-warning"><small>Customer can't be login.</small></p>
 				</div>
 				<div class="modal-footer">
 					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
@@ -135,4 +187,12 @@
 </div>
 
 </body>
+<script>
+$(document).ready(function () {
+	$('body').on('click', '.delete-id',function(){
+	document.getElementById("feed_id").value = $(this).attr('data-id');
+	console.log($(this).attr('data-id'));
+	});
+	});
+</script>
 </html>

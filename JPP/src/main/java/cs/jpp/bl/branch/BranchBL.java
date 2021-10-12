@@ -2,6 +2,7 @@ package cs.jpp.bl.branch;
 
 import cs.jpp.dl.branch.BranchService;
 import cs.jpp.dto.branch.Branch;
+import java.util.ArrayList;
 
 public class BranchBL{
 	public static int createBranch(Branch branch){
@@ -19,4 +20,26 @@ public class BranchBL{
 			}
 			return result;
     }
+	
+	public static ArrayList<Branch> getBranches(){
+		ArrayList<Branch> branches = null;
+		try {
+			branches = BranchService.getBranches();
+		}catch(Exception e) {
+			//e.printStackTrace();
+			System.out.println("*** ERROR BranchBL : getBranches : Exception :" + e.getMessage());
+		}
+		return branches;
+	}
+	
+	public static Branch getBranch(int branchId){
+		Branch branch = null;
+		try {
+			branch = BranchService.getBranch(branchId);
+		}catch(Exception e) {
+			//e.printStackTrace();
+			System.out.println("*** ERROR BranchBL : getBranch : Exception :" + e.getMessage());
+		}
+		return branch;
+	}
 }
