@@ -58,7 +58,9 @@ public class CustomerService {
 		try {
 			pageNo = pageSize * (pageNo - 1);
 			customers = new ArrayList<Customer>();
-			query = "select * from tbl_customer where status = 1 order by pk_customerId desc limit " + pageNo + "," + pageSize;
+			query = "select pk_customerId, name, fk_branchId, address, mobileNo, emailId, status, approved from tbl_customer where status = 1 order by pk_customerId desc limit " + pageNo + "," + pageSize;
+			//query = "select pk_customerId, name, fk_branchId, address, mobileNo, emailId, status, approved from tbl_customer order by pk_customerId desc limit " + pageNo + "," + pageSize;
+			
 			System.out.println(query);
 			rsRows = DbConnection.executeQuery(query);
 			if(rsRows != null) {
@@ -198,6 +200,29 @@ public class CustomerService {
 				System.out.println("*** ERROR CustomerService : getCustomerByKey : Exception :" + e.getMessage());
 			}
 			return customers;
+		}
+		
+		public static int getActiveCustomerCount(){
+			
+			String query = "";
+			ResultSet rsRows = null;
+			int count = 0;
+			
+			try {
+				query = "select count(*) from tbl_customer where status = 1 ";
+				//query = "select count(*) from tbl_customer";
+				System.out.println(query);
+				rsRows = DbConnection.executeQuery(query);
+				if(rsRows != null) {
+					if(rsRows.next()) {
+						count = rsRows.getInt(1);
+					}
+				}
+				
+			}catch(Exception e){
+				System.out.println("*** ERROR CustomerService : getActiveCustomerCount : Exception :" + e.getMessage());
+			}
+			return count;
 		}
 
 }

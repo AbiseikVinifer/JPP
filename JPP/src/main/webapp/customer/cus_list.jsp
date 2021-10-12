@@ -40,6 +40,8 @@
 					
 						<%!
 						ArrayList<Customer> customers = null;
+						int currentPageCustomerCount = 0;
+						int limit = 1;
 						%>
 						<%
 							if ("POST".equalsIgnoreCase(request.getMethod()) && (request.getParameter("search") != null) && (! request.getParameter("search").equals(""))) {
@@ -47,7 +49,7 @@
 								String searchKey = request.getParameter("search");
 								customers = CustomerBL.getCustomerByKey(searchKey);
 							}else{
-								int limit = 1;
+								limit = 1;
 								try{
 									limit = Integer.parseInt(request.getParameter("limit"));
 								}catch(Exception e){
@@ -91,7 +93,10 @@
 				try{
 					
 					if(customers != null){
-						for(Customer customer: customers){ %>
+						currentPageCustomerCount = 0;
+						for(Customer customer: customers){ 
+							currentPageCustomerCount ++;
+						%>
 					<tr>
 						<td>
 						<%= customer.getCustomerId() %>
@@ -127,19 +132,45 @@
 				%>
 					
 					 
-				</tbody>
+				</tbody>				
 			</table>
+			
+			<%!
+				int totalCustomers = 0; 
+				int totalPages = 0;
+			%>
+			
+			<%
+				try{
+					totalCustomers = CustomerBL.getActiveCustomerCount();
+					totalPages = totalCustomers/5;
+					if(totalCustomers % 5 != 0){
+						totalPages ++;
+					}
+					System.out.println("totalPages" + totalPages);
+				}catch(Exception e){
+					System.out.println("Error: cus_list.jsp: TotalCustomer: " + e.getMessage());
+				}
+			%>
 			<div class="clearfix">
-				<div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-				<ul class="pagination">
-					<li class="page-item disabled"><a href="#">Previous</a></li>
-					<li class="page-item"><a href="cus_list.jsp?limit=1" class="page-link">1</a></li>
-					<li class="page-item"><a href="cus_list.jsp?limit=2" class="page-link">2</a></li>
-					<li class="page-item active"><a href="cus_list.jsp?limit=3" class="page-link">3</a></li>
-					<li class="page-item"><a href="cus_list.jsp?limit=4" class="page-link">4</a></li>
-					<li class="page-item"><a href="cus_list.jsp?limit=5" class="page-link">5</a></li>
-					<li class="page-item"><a href="cus_list.jsp?limit=6" class="page-link">Next</a></li>
-				</ul>
+				<div class="hint-text">Showing <b><%= currentPageCustomerCount %></b> out of <b><%= totalCustomers %></b> entries</div>
+				<% if(totalPages > 1){ %>
+					<ul class="pagination">
+						<!--   <li class="page-item disabled"><a href="#">Previous</a></li> -->
+						
+						<% 
+						System.out.println("totalPages" + totalPages);
+							for(int i=1; i <= totalPages; i++){
+								if(i == limit){
+						%>
+									<li class="page-item active"><a href="cus_list.jsp?limit=<%=i%>" class="page-link"><%= i %></a></li>
+						<% 		}else{ %>
+									<li class="page-item"><a href="cus_list.jsp?limit=<%=i%>" class="page-link"><%= i %></a></li>	
+								<%}
+							} %>
+						<!-- <li class="page-item"><a href="cus_list.jsp?limit=6" class="page-link">Next</a></li> -->
+					</ul>
+				<% } %>
 			</div>
 		</div>
 	</div>        

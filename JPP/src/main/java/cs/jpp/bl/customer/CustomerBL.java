@@ -1,6 +1,9 @@
 package cs.jpp.bl.customer;
 
 import cs.jpp.dl.customer.CustomerService;
+import cs.jpp.dl.db.DbConnection;
+
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import cs.jpp.dto.customer.Customer;
 
@@ -90,5 +93,18 @@ public class CustomerBL {
 
 		}
 		return customers;
+	}
+	
+	public static int getActiveCustomerCount(){
+		
+		int count = 0;
+		
+		try {
+			count = CustomerService.getActiveCustomerCount();
+			
+		}catch(Exception e){
+			System.out.println("*** ERROR CustomerBL : getActiveCustomerCount : Exception :" + e.getMessage());
+		}
+		return count;
 	}
 }
